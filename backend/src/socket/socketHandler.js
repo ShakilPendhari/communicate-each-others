@@ -55,6 +55,66 @@ module.exports = (io) => {
       }
     });
 
+    // Edit a message
+    socket.on("edit_message", async (data, callback) => {
+      try {
+        const { messageId, content } = data;
+        if (!messageId || !content) {
+          return callback?.({ error: "messageId and content are required" });
+        }
+
+        const message = await Message.findById(messageId);
+        if (!message) return callback?.({ error: "Message not found" });
+        if (message.senderId.toString() !== socket.user.id) {
+          return callback?.({ error: "Not authorized" });
+        }
+        if (message.deleted) {
+          return callback?.({ error: "Cannot edit a deleted message" });
+        }
+
+        message.content = content;
+        message.edited = true;
+        message.editedAt = new Date();
+        await message.save();
+
+        await message.populate("senderId", "name email");
+        io.to(message.roomId.toString()).emit("update_message", message);
+
+        callback?.({ success: true });
+      } catch (err) {
+        console.error("edit_message error:", err.message);
+        callback?.({ error: "Failed to edit message" });
+      }
+    });
+
+    // Soft delete a message
+    socket.on("delete_message", async (data, callback) => {
+      try {
+        const { messageId } = data;
+        if (!messageId) {
+          return callback?.({ error: "messageId is required" });
+        }
+
+        const message = await Message.findById(messageId);
+        if (!message) return callback?.({ error: "Message not found" });
+        if (message.senderId.toString() !== socket.user.id) {
+          return callback?.({ error: "Not authorized" });
+        }
+
+        message.deleted = true;
+        message.deletedAt = new Date();
+        await message.save();
+
+        await message.populate("senderId", "name email");
+        io.to(message.roomId.toString()).emit("update_message", message);
+
+        callback?.({ success: true });
+      } catch (err) {
+        console.error("delete_message error:", err.message);
+        callback?.({ error: "Failed to delete message" });
+      }
+    });
+
     // Leave a room
     socket.on("leave_room", (roomId) => {
       socket.leave(roomId);
