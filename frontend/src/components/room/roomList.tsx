@@ -37,7 +37,10 @@ export default function RoomList({ onRoomSelect, selectedRoomId }: Props) {
   return (
     <div className="w-72 min-h-screen bg-slate-950/95 backdrop-blur-xl flex flex-col p-6 border-r border-white/10 shadow-2xl">
       <div className="mb-6">
-        <h2 className="text-white font-bold text-xl mb-2 tracking-wide">🏠 Rooms</h2>
+        <div className="flex items-center space-x-3 mb-2">
+          <img src="/src/assets/chat-icon.svg" alt="Chat" className="w-6 h-6" />
+          <h2 className="text-white font-bold text-xl tracking-wide">Rooms</h2>
+        </div>
         <p className="text-white/50 text-sm">Choose a room to start chatting</p>
       </div>
       <div className="flex gap-3 mb-6">

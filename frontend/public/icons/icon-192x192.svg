@@ -1,0 +1,11 @@
+<svg width="192" height="192" viewBox="0 0 192 192" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="192" height="192" rx="32" fill="#1e293b"/>
+  <!-- Chat bubble inspired by WhatsApp/Telegram -->
+  <path d="M48 64h96v64H80l-16 16V128H48V64z" fill="#8b5cf6"/>
+  <!-- Message dots -->
+  <circle cx="72" cy="88" r="4" fill="white"/>
+  <circle cx="88" cy="88" r="4" fill="white"/>
+  <circle cx="104" cy="88" r="4" fill="white"/>
+  <!-- Second bubble -->
+  <path d="M144 96h24v24h-8l-8 8V120h-8V96z" fill="#a855f7"/>
+</svg>

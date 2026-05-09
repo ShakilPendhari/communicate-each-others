@@ -1,0 +1,14 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" rx="80" fill="#1e293b"/>
+  <!-- Main chat bubble -->
+  <path d="M128 160h256v160H224l-40 40V320H128V160z" fill="#8b5cf6"/>
+  <!-- Message dots -->
+  <circle cx="192" cy="224" r="12" fill="white"/>
+  <circle cx="232" cy="224" r="12" fill="white"/>
+  <circle cx="272" cy="224" r="12" fill="white"/>
+  <!-- Second bubble -->
+  <path d="M384 256h64v64h-24l-24 24V320h-16V256z" fill="#a855f7"/>
+  <!-- Small accent bubbles -->
+  <circle cx="80" cy="120" r="8" fill="#6366f1" opacity="0.6"/>
+  <circle cx="432" cy="400" r="6" fill="#8b5cf6" opacity="0.4"/>
+</svg>
