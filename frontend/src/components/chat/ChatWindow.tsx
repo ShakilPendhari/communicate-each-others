@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import api from "../../services/api";
 import { useSocket } from "../../context/SocketContext";
+import { messageService } from "../../services/message";
 import MessageList from "./MessageList";
 import MessageInput from "./MessageInput";
 
@@ -24,7 +24,7 @@ export default function ChatWindow({ roomId, roomName }: Props) {
 
   // Load history
   useEffect(() => {
-    api.get(`/messages/${roomId}`).then(({ data }) => setMessages(data));
+    messageService.getMessages(roomId).then((data) => setMessages(data));
   }, [roomId]);
 
   // Listen for new messages and updates

@@ -24,10 +24,12 @@ export default function MessageList({ messages, onEditMessage, onDeleteMessage }
   const { user } = useAuth();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingContent, setEditingContent] = useState("");
+  const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
 
   const startEdit = (message: Message) => {
     setEditingId(message._id);
     setEditingContent(message.content);
+    setMenuOpenId(null);
   };
 
   const cancelEdit = () => {
@@ -40,6 +42,12 @@ export default function MessageList({ messages, onEditMessage, onDeleteMessage }
     onEditMessage(messageId, editingContent.trim());
     cancelEdit();
   };
+
+  const toggleMenu = (messageId: string) => {
+    setMenuOpenId((prev) => (prev === messageId ? null : messageId));
+  };
+
+  const closeMenu = () => setMenuOpenId(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -60,31 +68,37 @@ export default function MessageList({ messages, onEditMessage, onDeleteMessage }
             <div className={`max-w-xl ${isOwnMessage ? 'order-2' : 'order-1'} relative`}>
               <div className={`flex items-center justify-between gap-2 mb-2 ${isOwnMessage ? 'text-right' : 'text-left'}`}>
                 <p className="text-xs text-white/50 font-medium">{msg.senderId.name}</p>
-                {isOwnMessage && !msg.deleted && (
-                  <div className="flex items-center gap-2 text-[10px] text-white/60">
-                    {msg.edited && <span className="italic">edited</span>}
-                    {!isEditing && (
-                      <>
+                {isOwnMessage && !msg.deleted && !isEditing && (
+                  <div className="relative">
+                    <button
+                      onClick={() => toggleMenu(msg._id)}
+                      className="h-9 w-9 flex items-center justify-center rounded-full bg-white/10 text-white/70 hover:bg-white/20"
+                    >
+                      <span className="text-lg">⋯</span>
+                    </button>
+                    {menuOpenId === msg._id && (
+                      <div className="absolute right-0 top-full mt-2 w-32 rounded-2xl border border-white/10 bg-slate-950/95 backdrop-blur-xl shadow-2xl p-2 z-10">
+                        {msg.edited && <div className="text-[10px] text-white/40 uppercase tracking-[0.18em] mb-2">edited</div>}
                         <button
                           onClick={() => startEdit(msg)}
-                          className="px-2 py-1 rounded-lg bg-white/10 hover:bg-white/20"
+                          className="w-full text-left px-3 py-2 rounded-xl text-sm text-white/80 hover:bg-white/10"
                         >
                           Edit
                         </button>
                         <button
-                          onClick={() => onDeleteMessage(msg._id)}
-                          className="px-2 py-1 rounded-lg bg-red-500/20 hover:bg-red-500/30"
+                          onClick={() => { onDeleteMessage(msg._id); closeMenu(); }}
+                          className="w-full text-left px-3 py-2 rounded-xl text-sm text-rose-300 hover:bg-rose-500/10"
                         >
                           Delete
                         </button>
-                      </>
+                      </div>
                     )}
                   </div>
                 )}
               </div>
 
               {msg.deleted ? (
-                <div className="text-sm px-6 py-4 rounded-2xl border border-white/10 bg-white/5 text-white/50 italic">
+                <div className="text-sm px-6 py-4 rounded-2xl border border-white/10 bg-white/5 text-white/30 italic blur-[0.5px] select-none">
                   This message was deleted.
                 </div>
               ) : isEditing ? (

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import api from "../../services/api";
 import { useSocket } from "../../context/SocketContext";
+import { roomService } from "../../services/room";
 
 interface Room {
   _id: string;
@@ -18,7 +18,7 @@ export default function RoomList({ onRoomSelect, selectedRoomId }: Props) {
   const [newRoom, setNewRoom] = useState("");
 
   useEffect(() => {
-    api.get("/rooms").then(({ data }) => setRooms(data));
+    roomService.getRooms().then((data) => setRooms(data));
   }, []);
 
   const handleJoin = (room: Room) => {
@@ -28,7 +28,7 @@ export default function RoomList({ onRoomSelect, selectedRoomId }: Props) {
 
   const handleCreate = async () => {
     if (!newRoom.trim()) return;
-    const { data } = await api.post("/rooms", { name: newRoom.trim() });
+    const data = await roomService.createRoom(newRoom.trim());
     setRooms((prev) => [data, ...prev]);
     setNewRoom("");
     handleJoin(data);

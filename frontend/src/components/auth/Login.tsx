@@ -1,7 +1,6 @@
 import { useState } from "react";
-import api from "../../services/api";
+import { authService } from "../../services/auth";
 import { useAuth } from "../../context/AuthContext";
-import { endpoints } from "../../constants/endpoints";
 
 export default function Login({ onSwitch }: { onSwitch: () => void }) {
   const { login } = useAuth();
@@ -14,9 +13,10 @@ export default function Login({ onSwitch }: { onSwitch: () => void }) {
     setError("");
     setLoading(true);
     try {
-      const { data } = await api.post(endpoints.auth.login, form);
+      const data = await authService.login(form.email, form.password);
       login(data.token, data.user);
-    } catch (err: any) {
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
       setError(err.response?.data?.message || "Something went wrong");
     } finally {
       setLoading(false);
