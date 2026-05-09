@@ -28,6 +28,15 @@ Generic chat apps often struggle with technical content. **Communicate Each Othe
 
 ---
 
+## 🌐 Deployment & Architecture
+The application follows a modern cloud-native architecture for scalability and ease of deployment:
+
+- **Backend (GCP + Docker):** The Node.js API and Socket.io server are containerized using **Docker** and deployed on **Google Cloud Platform (GCP)** (via Cloud Run or GKE). This ensures a consistent environment and seamless scaling.
+- **Frontend (Vercel):** The React application is hosted on **Vercel**, benefiting from their global Edge Network for fast asset delivery and automated CI/CD.
+- **Connectivity:** The frontend communicates with the GCP-hosted backend via secure HTTPS and WebSockets, configured through environment variables (e.g., `VITE_API_URL`).
+
+---
+
 ## 🚀 Roadmap: What I will be working on
 - [ ] **End-to-End Encryption:** Implementing AES-GCM client-side encryption for all messages.
 - [ ] **Multi-Language Snippets:** Expanding syntax highlighting for 20+ programming languages.
