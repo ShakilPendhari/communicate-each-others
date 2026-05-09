@@ -5,6 +5,7 @@ import { encryptMessage, decryptMessage, isCryptoSupported } from "../../utils/c
 import { messageService } from "../../services/message";
 import MessageList from "./MessageList";
 import MessageInput from "./MessageInput";
+import TypingIndicator from "./TypingIndicator";
 
 interface Message {
   _id: string;
@@ -24,8 +25,14 @@ export default function ChatWindow({ roomId, roomName }: Props) {
   const { socket } = useSocket();
   const { getOrCreateKey } = useEncryption();
   const [messages, setMessages] = useState<Message[]>([]);
+  const [typingUsers, setTypingUsers] = useState<string[]>([]);
   const [cryptoKey, setCryptoKey] = useState<CryptoKey | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // Clear typing users when room changes
+  useEffect(() => {
+    setTypingUsers([]);
+  }, [roomId]);
 
   // Initialize encryption for the room automatically
   useEffect(() => {
@@ -72,7 +79,7 @@ export default function ChatWindow({ roomId, roomName }: Props) {
     });
   }, [roomId, cryptoKey, decryptAll]);
 
-  // Listen for new messages
+  // Listen for new messages and typing events
   useEffect(() => {
     if (!socket || !cryptoKey) return;
 
@@ -94,12 +101,24 @@ export default function ChatWindow({ roomId, roomName }: Props) {
       }
     };
 
+    const userTypingHandler = ({ name }: { name: string }) => {
+      setTypingUsers((prev) => (prev.includes(name) ? prev : [...prev, name]));
+    };
+
+    const userStopTypingHandler = ({ name }: { name: string }) => {
+      setTypingUsers((prev) => prev.filter((u) => u !== name));
+    };
+
     socket.on("new_message", newMessageHandler);
     socket.on("update_message", updateMessageHandler);
+    socket.on("user_typing", userTypingHandler);
+    socket.on("user_stop_typing", userStopTypingHandler);
 
     return () => {
       socket.off("new_message", newMessageHandler);
       socket.off("update_message", updateMessageHandler);
+      socket.off("user_typing", userTypingHandler);
+      socket.off("user_stop_typing", userStopTypingHandler);
     };
   }, [socket, cryptoKey]);
 
@@ -158,7 +177,12 @@ export default function ChatWindow({ roomId, roomName }: Props) {
         onEditMessage={handleEditMessage}
         onDeleteMessage={handleDeleteMessage}
       />
-      <MessageInput onSend={handleSend} />
+      <TypingIndicator typingUsers={typingUsers} />
+      <MessageInput 
+        onSend={handleSend} 
+        onTypingStart={() => socket?.emit("typing_start", roomId)}
+        onTypingStop={() => socket?.emit("typing_stop", roomId)}
+      />
     </div>
   );
 }

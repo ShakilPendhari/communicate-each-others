@@ -1,20 +1,48 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 const LANGUAGES = ["javascript", "typescript", "python", "bash"];
 
 interface Props {
   onSend: (content: string, type: "text" | "code", language: string) => void;
+  onTypingStart?: () => void;
+  onTypingStop?: () => void;
 }
 
-export default function MessageInput({ onSend }: Props) {
+export default function MessageInput({ onSend, onTypingStart, onTypingStop }: Props) {
   const [content, setContent] = useState("");
   const [mode, setMode] = useState<"text" | "code">("text");
   const [language, setLanguage] = useState("javascript");
+  
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isTypingRef = useRef(false);
 
   const handleSend = () => {
     if (!content.trim()) return;
     onSend(content.trim(), mode, language);
     setContent("");
+    
+    // Stop typing indicator immediately on send
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+    isTypingRef.current = false;
+    onTypingStop?.();
+  };
+
+  const handleTyping = () => {
+    if (!isTypingRef.current) {
+      isTypingRef.current = true;
+      onTypingStart?.();
+    }
+
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    typingTimeoutRef.current = setTimeout(() => {
+      isTypingRef.current = false;
+      onTypingStop?.();
+    }, 1500);
   };
 
   return (
@@ -58,7 +86,10 @@ export default function MessageInput({ onSend }: Props) {
           className="flex-1 bg-white/10 border border-white/20 text-white text-sm rounded-xl px-4 py-3 outline-none resize-none focus:border-indigo-400 placeholder-white/50 backdrop-blur-sm"
           placeholder={mode === "code" ? "Paste your code here..." : "Type a message..."}
           value={content}
-          onChange={(e) => setContent(e.target.value)}
+          onChange={(e) => {
+            setContent(e.target.value);
+            handleTyping();
+          }}
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey && mode === "text") {
               e.preventDefault();

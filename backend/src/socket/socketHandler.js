@@ -121,6 +121,15 @@ module.exports = (io) => {
       console.log(`${socket.user.name} left room: ${roomId}`);
     });
 
+    // Typing indicators
+    socket.on("typing_start", (roomId) => {
+      socket.to(roomId).emit("user_typing", { name: socket.user.name });
+    });
+
+    socket.on("typing_stop", (roomId) => {
+      socket.to(roomId).emit("user_stop_typing", { name: socket.user.name });
+    });
+
     socket.on("disconnect", () => {
       console.log(`Socket disconnected: ${socket.id}`);
     });
