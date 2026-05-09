@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { authService } from "../../services/auth";
 import { useAuth } from "../../context/AuthContext";
+import chatIcon from "../../assets/chat-icon.svg";
 
 export default function Login({ onSwitch }: { onSwitch: () => void }) {
   const { login } = useAuth();
@@ -37,7 +38,7 @@ export default function Login({ onSwitch }: { onSwitch: () => void }) {
       <div className="bg-white/10 backdrop-blur-lg border border-white/20 p-8 rounded-3xl w-full max-w-md shadow-2xl">
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
-            <img src="/src/assets/chat-icon.svg" alt="Chat App" className="w-12 h-12" />
+            <img src={chatIcon} alt="Chat App" className="w-12 h-12" />
           </div>
           <h1 className="text-3xl font-bold text-white mb-2 tracking-wide">Welcome Back</h1>
           <p className="text-white/70 text-sm">Sign in to your account</p>

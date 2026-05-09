@@ -6,6 +6,7 @@ import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
 import RoomList from "./components/room/roomList";
 import ChatWindow from "./components/chat/ChatWindow";
+import chatIcon from "./assets/chat-icon.svg";
 
 function AppContent() {
   const { isAuthenticated, logout } = useAuth();
@@ -48,7 +49,7 @@ function AppContent() {
             <div className="flex justify-between items-center px-6 py-3 bg-black/20 backdrop-blur-sm border-b border-white/10">
               {/* App logo and title - visible on desktop */}
               <div className="hidden lg:flex items-center space-x-3">
-                <img src="/src/assets/chat-icon.svg" alt="Chat App" className="w-8 h-8" />
+                <img src={chatIcon} alt="Chat App" className="w-8 h-8" />
                 <h1 className="text-white font-bold text-lg">Communicate</h1>
               </div>
 
@@ -78,7 +79,7 @@ function AppContent() {
                 <div className="flex-1 flex flex-col items-center justify-center text-white/60">
                   <div className="text-center">
                     <div className="mb-6">
-                      <img src="/src/assets/chat-icon.svg" alt="Chat App" className="w-20 h-20 mx-auto opacity-60" />
+                      <img src={chatIcon} alt="Chat App" className="w-20 h-20 mx-auto opacity-60" />
                     </div>
                     <h2 className="text-2xl font-bold mb-2 text-white/80">Welcome to Communicate</h2>
                     <p className="text-white/50">Select a room from the sidebar to start chatting</p>
